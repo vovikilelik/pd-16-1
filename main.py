@@ -54,14 +54,9 @@ has_exists = os.path.isfile(DATABASE_PATH)
 db.create_all()
 
 
-def get_value(data, field):
-    if field in data:
-        return data[field]
-
-
 def add_user(row):
     user = User(
-        id=get_value(row, 'id'),
+        id=row.get('id'),
         first_name=row['first_name'],
         last_name=row['last_name'],
         age=row['age'],
@@ -75,7 +70,7 @@ def add_user(row):
 
 def add_offer(row):
     offer = Offer(
-        id=get_value(row, 'id'),
+        id=row.get('id'),
         order_id=row['order_id'],
         executor_id=row['executor_id']
     )
@@ -85,7 +80,7 @@ def add_offer(row):
 
 def add_order(row):
     order = Order(
-        id=get_value(row, 'id'),
+        id=row.get('id'),
         name=row['name'],
         description=row['description'],
         start_date=row['start_date'],
@@ -145,14 +140,14 @@ def run():
     # Добавить пользователя
     @app.route('/users', methods=['POST'])
     def add_user_view():
-        add_user(request.data)
+        add_user(request.json)
         db.session.commit()
         return ''
 
     # Обновление пользователя по id
     @app.route('/users/<int:user_id>', methods=['PUT'])
     def put_user_view(user_id):
-        add_user({id: user_id, **request.data})
+        add_user({id: user_id, **request.json})
         db.session.commit()
         return ''
 
@@ -180,14 +175,14 @@ def run():
     # Добавить запрос
     @app.route('/offers', methods=['POST'])
     def add_offer_view():
-        add_offer(request.data)
+        add_offer(request.json)
         db.session.commit()
         return ''
 
     # Обновление запроса по id
     @app.route('/offers/<int:offer_id>', methods=['PUT'])
     def put_offer_view(offer_id):
-        add_offer({id: offer_id, **request.data})
+        add_offer({id: offer_id, **request.json})
         db.session.commit()
         return ''
 
@@ -215,7 +210,7 @@ def run():
     # Добавить заказ
     @app.route('/orders', methods=['POST'])
     def add_order_view():
-        add_offer(request.data)
+        add_offer(request.json)
         db.session.commit()
         return ''
 
